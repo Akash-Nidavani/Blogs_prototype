@@ -111,6 +111,10 @@ module.exports = {
         type: DataTypes.STRING,
         allowNull: true
       },
+      status: {
+        type: DataTypes.ENUM("Draft", "Published", "Deleted"),
+        defaultValue: "Draft",
+      },
       categoryId: {
         type: DataTypes.INTEGER,
         allowNull: false,

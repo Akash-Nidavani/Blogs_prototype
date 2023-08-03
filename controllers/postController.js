@@ -24,7 +24,6 @@ const createPost = async (req, res) => {
 
 const getAllPosts = async (req, res) => {
     try {
-        let fullinfo = {}
         const blog = await db.post.findAll({
             attributes:['id','title', ['createdAt' ,'Date']],
             include: [{
@@ -60,8 +59,81 @@ const deletePost = async (req, res) => {
     }
 };
 
+
+const updatePost = async (req, res) => {
+    try {
+      const post = await db.post.findByPk(req.params.id);
+      if (!post) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      const { title,description,content,categoryId,image, status } = req.body; //status
+      post.title = title;
+      post.description = description;
+      post.content = content;
+      post.categoryId = categoryId;
+      post.image = image;
+      post.status = status;
+      await post.save();
+      res.json(post);
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: "Failed to update the blog" });
+    }
+};
+
+const getDeletedPost = async (req, res) => {
+    try {
+        const blog = await db.post.findAll({
+            where:{status:"Deleted"},
+            attributes:['id','title', ['createdAt' ,'Date']],
+            include: [{
+                model: db.author,
+                as: 'authors',
+                attributes: ['firstname', 'lastname'],
+              },{
+                model: db.category,
+                as: 'categories',
+                attributes: ['name'],
+              }]  
+        });
+        // {include:['blogs_author']} --> for joining Respecting author data
+       res.send(blog)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: "Failed to fetch blogs" });
+    }
+};
+
+
+const getPublishedPost = async (req, res) => {
+    try {
+        const blog = await db.post.findAll({
+            where:{status:"Published"},
+            attributes:['id','title', ['createdAt' ,'Date']],
+            include: [{
+                model: db.author,
+                as: 'authors',
+                attributes: ['firstname', 'lastname'],
+              },{
+                model: db.category,
+                as: 'categories',
+                attributes: ['name'],
+              }]  
+        });
+        // {include:['blogs_author']} --> for joining Respecting author data
+       res.send(blog)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: "Failed to fetch blogs" });
+    }
+};
+
+
 module.exports = {
     createPost,
     deletePost,
-    getAllPosts
+    getAllPosts,
+    updatePost,
+    getDeletedPost,
+    getPublishedPost
 }

@@ -128,6 +128,32 @@
 
 
 
+const express = require('express');
+const multer = require('multer');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const { Image } = require('./models');
+
+const app = express();
+const PORT = 3000;
+app.use(cors());
+app.use(bodyParser.json());
+
+const upload = multer();
+
+app.post('/upload', upload.single('image'), async (req, res) => {
+  try {
+    const { originalname, buffer } = req.file;
+    await Image.create({
+      name: originalname,
+      data: buffer,
+    });
+    res.json({ message: 'Image uploaded successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to upload image' });
+  }
+});
+
 
 
 
