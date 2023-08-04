@@ -1,5 +1,6 @@
 const db = require("./../models");
 const sequelize = require("sequelize")
+
 const createAuthor = async (req, res) => {
     try {
         const { firstname, lastname, email, phonenumber, bio } = req.body;
@@ -65,5 +66,5 @@ module.exports = {
     createAuthor,
     getAllAuthors,
     deleteAuthor,
-    getAllAuthorsBlog
+    getAllAuthorsBlog,
 }
