@@ -7,5 +7,6 @@ const categorySchema = require('../models/categorySchema');
 router.post('/',trimBodyMiddleware,categoryController.createCategory);
 router.get('/',categoryController.getAllCategories);
 router.delete('/:id',categoryController.deleteCategories)
+router.put('/:id',categoryController.editCategory)
 
 module.exports = router;

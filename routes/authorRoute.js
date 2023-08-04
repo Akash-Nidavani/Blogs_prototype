@@ -7,6 +7,7 @@ const {trimBodyMiddleware }   = require("../middlewear/trimInput")
 router.post('/',trimBodyMiddleware,validateAuthor,authorController.createAuthor);
 router.get('/',authorController.getAllAuthors);
 router.delete('/:id',authorController.deleteAuthor);
+router.put('/:id',authorController.editAuthor);
 router.get('/blogs', authorController.getAllAuthorsBlog)
 
 module.exports = router;

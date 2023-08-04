@@ -27,7 +27,7 @@ const createAuthor = async (req, res) => {
 // {include:'auth_posts'} to get Author along with thier posts
 const getAllAuthorsBlog = async (req, res) => {
     try {
-        const authors = await db.author.findAll({ include: 'auth_posts' });
+        const authors = await db.author.findAll({ include: 'authors' });
         res.json(authors);
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch authors" });
@@ -61,10 +61,31 @@ const deleteAuthor = async (req, res) => {
     }
   };
 
+const editAuthor = async (req, res) =>{
+    try{
+        const author = await db.author.findByPk(req.params.id);
+        if(!author){
+            return res.status(404).json({error:"Author not found"})
+        }
+        const { firstname, lastname, email, phonenumber, bio, image } = req.body;
+        author.firstname = firstname;
+        author.lastname = lastname;
+        author.email = email;
+        author.phonenumber = phonenumber;
+        author.bio = bio;
+        author.image = image;
+        await author.save();
+        res.json(author);
 
+    }catch(error){
+        res.status(500).json({error: "Failed to edit the Author details"})
+    }
+}
+ 
 module.exports = {
     createAuthor,
     getAllAuthors,
     deleteAuthor,
     getAllAuthorsBlog,
+    editAuthor
 }
