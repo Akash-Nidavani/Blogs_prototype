@@ -1,5 +1,6 @@
 const db = require("./../models");
 const sequelize = require('sequelize');
+const { Op } = require("sequelize")
 
 const createPost = async (req, res) => {
     try {
@@ -27,9 +28,9 @@ const getAllPosts = async (req, res) => {
     try {
         const blog = await db.post.findAll({
             // attributes: ['id', 'title', ['createdAt', 'Date']],
-            attributes:['id', 'title', 
+            attributes: ['id', 'title',
                 [sequelize.fn('TO_CHAR', sequelize.col(`"post"."createdAt"`), 'DD-MM-YYYY'), 'date']
-              ],
+            ],
             include: [{
                 model: db.author,
                 as: 'authors',
@@ -132,11 +133,49 @@ const getPublishedPost = async (req, res) => {
 };
 
 
+const searchBlog = async (req, res) => {
+    const searchKey = req.params.key;
+    try {
+        const posts = await db.post.findAll({
+            where: {
+                [Op.or]: [{
+                    title: {
+                        [Op.iLike]: `%${searchKey}%`,
+                    }
+                }, {
+                    content: {
+                        [Op.iLike]: `%${searchKey}%`,
+                    }
+                },
+                {
+                    description: {
+                        [Op.iLike]: `%${searchKey}%`,
+                    }
+                }]
+            },
+        });
+
+        // const author = await db.uthor.findAll({
+        //     where: {
+        //         title: {
+        //             [Op.iLike]: `%${query}%`,
+        //         },
+        //     },
+        // });
+
+        res.json({ posts });
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).json({ error: 'Failed to search' });
+    }
+}
+
 module.exports = {
     createPost,
     deletePost,
     getAllPosts,
     updatePost,
     getDeletedPost,
-    getPublishedPost
+    getPublishedPost,
+    searchBlog
 }

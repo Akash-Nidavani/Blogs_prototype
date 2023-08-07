@@ -9,6 +9,7 @@ router.get('/deleted',PostController.getDeletedPost);
 router.get('/published',PostController.getPublishedPost);
 router.delete('/:id',PostController.deletePost);
 router.put('/:id', PostController.updatePost);
+router.get('/:key', PostController.searchBlog)
 
 
 module.exports = router;

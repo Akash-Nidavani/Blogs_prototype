@@ -158,7 +158,25 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 
 
 
+where: {
+  [Op.or]: [{
+    firstname: {
+      [Op.iLike]: `%${searchKey}%`,
+    }
+  }, {
+    lastname: {
+      [Op.iLike]: `%${searchKey}%`,
+    }
+  }], 
+},
 
+
+firstname: {
+  [Op.iLike]: `%${searchKey}%`,
+},
+lastname: {
+  [Op.iLike]: `%${searchKey}%`,
+},
 
 
 

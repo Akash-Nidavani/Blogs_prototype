@@ -9,5 +9,6 @@ router.get('/',authorController.getAllAuthors);
 router.delete('/:id',authorController.deleteAuthor);
 router.put('/:id',authorController.editAuthor);
 router.get('/blogs', authorController.getAllAuthorsBlog)
+router.get('/:key', authorController.searchAuthor)
 
 module.exports = router;

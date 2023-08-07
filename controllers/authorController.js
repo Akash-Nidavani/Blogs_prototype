@@ -1,11 +1,12 @@
 const db = require("./../models");
 const sequelize = require("sequelize")
+const { Op } = require("sequelize")
 
 const createAuthor = async (req, res) => {
     try {
         const { firstname, lastname, email, phonenumber, bio } = req.body;
-        if(!req.file){
-            return res.status(400).json({error:"Blog picture needs to be uploaded"})
+        if (!req.file) {
+            return res.status(400).json({ error: "profile picture needs to be uploaded" })
         }
         const image = req.file ? req.file.path : null;
         const author = await db.author.create({
@@ -37,8 +38,8 @@ const getAllAuthorsBlog = async (req, res) => {
 const getAllAuthors = async (req, res) => {
     try {
         const authors = await db.author.findAll({
-            attributes:{
-                exclude:['createdAt', 'updatedAt']
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
             }
         });
         res.json(authors);
@@ -50,22 +51,22 @@ const getAllAuthors = async (req, res) => {
 
 const deleteAuthor = async (req, res) => {
     try {
-      const author = await db.author.findByPk(req.params.id);
-      if (!author) {
-        return res.status(404).json({ error: "Author not found" });
-      }
-      await author.destroy();
-      res.json({ message: "Author deleted successfully" });
-    } catch (error) {
-      res.status(500).json({ error: "Failed to delete the author" });
-    }
-  };
-
-const editAuthor = async (req, res) =>{
-    try{
         const author = await db.author.findByPk(req.params.id);
-        if(!author){
-            return res.status(404).json({error:"Author not found"})
+        if (!author) {
+            return res.status(404).json({ error: "Author not found" });
+        }
+        await author.destroy();
+        res.json({ message: "Author deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to delete the author" });
+    }
+};
+
+const editAuthor = async (req, res) => {
+    try {
+        const author = await db.author.findByPk(req.params.id);
+        if (!author) {
+            return res.status(404).json({ error: "Author not found" })
         }
         const { firstname, lastname, email, phonenumber, bio, image } = req.body;
         author.firstname = firstname;
@@ -77,15 +78,52 @@ const editAuthor = async (req, res) =>{
         await author.save();
         res.json(author);
 
-    }catch(error){
-        res.status(500).json({error: "Failed to edit the Author details"})
+    } catch (error) {
+        res.status(500).json({ error: "Failed to edit the Author details" })
     }
 }
- 
+
+
+const searchAuthor = async (req, res) => {
+    try {
+        const searchKey = req.params.key;
+        let searchResult = await db.author.findAll({
+            where: {
+                [Op.or]: [{
+                    firstname: {
+                        [Op.iLike]: `%${searchKey}%`,
+                    }
+                }, {
+                    lastname: {
+                        [Op.iLike]: `%${searchKey}%`,
+                    }
+                }, {
+                    email: {
+                        [Op.iLike]: `%${searchKey}%`,
+                    }
+                },
+                {
+                    phonenumber: {
+                        [Op.iLike]: `%${searchKey}%`,
+                    }
+                }
+                ],
+            }
+        })
+        if (!searchResult) {
+            return res.status(404).json({ error: "Author not found!" })
+        }
+        res.status(200).json({ searchResult })
+    } catch (error) {
+        res.status(404).json({ error: "Author not found!" })
+    }
+}
+
 module.exports = {
     createAuthor,
     getAllAuthors,
     deleteAuthor,
     getAllAuthorsBlog,
-    editAuthor
+    editAuthor,
+    searchAuthor
 }
