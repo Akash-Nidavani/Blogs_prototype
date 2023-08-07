@@ -74,9 +74,14 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: {
       allowNull: false,
       type: DataTypes.DATE
+    },
+    deletedAt: {
+      allowNull: true,
+      type: DataTypes.DATE
     }
   }, {
     sequelize,
+    paranoid:true,
     modelName: 'post',
     tableName: 'post'
   });

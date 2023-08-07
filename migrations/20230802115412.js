@@ -46,7 +46,6 @@ module.exports = {
       },
     });
 
-
     await queryInterface.createTable('author', {
       id: {
         type: DataTypes.INTEGER,
@@ -85,6 +84,10 @@ module.exports = {
       },
       updatedAt: {
         allowNull: false,
+        type: DataTypes.DATE
+      },
+      deletedAt: {
+        allowNull: true,
         type: DataTypes.DATE
       },
     })
@@ -137,6 +140,10 @@ module.exports = {
       },
       updatedAt: {
         allowNull: false,
+        type: DataTypes.DATE
+      },
+      deletedAt: {
+        allowNull: true,
         type: DataTypes.DATE
       },
     });

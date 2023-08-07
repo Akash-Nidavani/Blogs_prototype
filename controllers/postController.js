@@ -19,7 +19,6 @@ const createPost = async (req, res) => {
         });
         res.status(200).json(post);
     } catch (error) {
-        console.log(error)
         res.status(500).json({ error: "Failed to create a post" });
     }
 };
@@ -44,17 +43,44 @@ const getAllPosts = async (req, res) => {
         });
         res.send(blog)
     } catch (error) {
-        console.log(error)
         res.status(500).json({ error: "Failed to fetch blogs" });
     }
 };
 
-const deletePost = async (req, res) => {
+
+const getPostById = async (req, res) => {
+    try {
+        const blog = await db.post.findOne({
+            where:{ id : req.params.id},
+            // attributes: ['id', 'title', ['createdAt', 'Date']],
+            attributes: ['id', 'title',
+                [sequelize.fn('TO_CHAR', sequelize.col(`"post"."createdAt"`), 'DD-MM-YYYY'), 'date']
+            ],
+            include: [{
+                model: db.author,
+                as: 'authors',
+                attributes: [[sequelize.literal(`firstname||' '||lastname`), 'author']],
+                // attributes: ['firstname', 'lastname'],
+            }, {
+                model: db.category,
+                as: 'categories',
+                attributes: ['name'],
+            }]
+        });
+        res.send(blog)
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch blogs" });
+    }
+};
+
+
+const SoftDeletePost = async (req, res) => {
     try {
         const blog = await db.post.findByPk(req.params.id);
         if (!blog) {
             return res.status(404).json({ error: "Blog not found" });
         }
+        await db.post.update({status:"Deleted"}, {where:{id:req.params.id}})
         await blog.destroy();
         res.json({ message: "Blog deleted successfully" });
     } catch (error) {
@@ -170,12 +196,43 @@ const searchBlog = async (req, res) => {
     }
 }
 
+
+const restoreBlog = async (req, res)=>{
+    try{
+        const post = await db.post.restore({ where:{ id :req.params.id}});
+        if (!post) {
+            return res.status(404).json({ error: "Blog not found!" })
+        }
+        res.status(200).json({ "Blog is restored":post })
+    }catch(error){
+        console.log(error.message)
+        res.status(404).json({ error: "Blog not found!" })
+    }
+}
+
+const permanentdeletePost = async (req, res) => {
+    try {
+        const blog = await db.post.findByPk(req.params.id, {force:true});
+        if (!blog) {
+            return res.status(404).json({ error: "Blog not found" });
+        }
+        await blog.destroy({force:true});
+        res.json({ message: "Blog deleted permanently" });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: "Failed to delete the blog" });
+    }
+};
+
 module.exports = {
     createPost,
-    deletePost,
     getAllPosts,
+    getPostById,
+    SoftDeletePost,
     updatePost,
     getDeletedPost,
     getPublishedPost,
-    searchBlog
+    searchBlog,
+    restoreBlog,
+    permanentdeletePost
 }

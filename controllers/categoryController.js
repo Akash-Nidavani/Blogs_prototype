@@ -19,7 +19,7 @@ const createCategory = async (req, res) => {
 
 const getAllCategories = async (req, res) => {
     try {
-        const category = await db.category.findAll({ include: 'categories' });
+        const category = await db.category.findAll();
         res.status(200).json(category);
     } catch (error) {
         console.log(error)
@@ -40,7 +40,7 @@ const deleteCategories = async (req, res) => {
     }
 };
 
-const editCategory = async (req, res) => {
+const updateCategory = async (req, res) => {
     try {
         const category = await db.category.findByPk(req.params.id);
         if (!category) {
@@ -56,10 +56,9 @@ const editCategory = async (req, res) => {
 }
 
 
-
 module.exports = {
     createCategory,
     getAllCategories,
     deleteCategories,
-    editCategory
+    updateCategory
 }

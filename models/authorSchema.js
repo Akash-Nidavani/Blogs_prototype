@@ -53,8 +53,13 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             type: DataTypes.DATE
         },
+        deletedAt: {
+            allowNull: true,
+            type: DataTypes.DATE
+        },
     }, {
         sequelize,
+        paranoid:true,
         modelName: 'author',
         tableName: 'author'
     });

@@ -17,7 +17,6 @@ app.use("/images", express.static("./images"));
 app.use("/author",uploadImage, authorRoutes)
 app.use("/post",uploadImage, postRoutes);
 app.use("/category", categoryRoutes)
-app.use("/tag", tagRoutes)
 
 
 app.listen(PORT,()=>{
