@@ -24,14 +24,19 @@ const createAuthor = async (req, res) => {
     }
 };
 
-
 // {include:'auth_posts'} to get Author along with thier posts
 const getAllAuthorsBlog = async (req, res) => {
     try {
-        const authors = await db.author.findAll({ include: 'authors' });
-        res.json(authors);
+        const authors_blogs = await db.author.findAll({
+            include: [{
+                model: db.post,
+                as: 'authors'
+            }]
+        });
+        res.json({authors_blogs});
     } catch (error) {
-        res.status(500).json({ error: "Failed to fetch authors" });
+        // console.log(">>>>>>>>>><<<<<<<<<<<<<", error.message)
+        res.status(500).json({ error: "Failed to fetch author and blogs" });
     }
 };
 
@@ -65,11 +70,11 @@ const softDeleteAuthor = async (req, res) => {
 
 const permanentDeleteAuthor = async (req, res) => {
     try {
-        const author = await db.author.findByPk(req.params.id,{forece:true});
+        const author = await db.author.findByPk(req.params.id, { forece: true });
         if (!author) {
             return res.status(404).json({ error: "Author not found" });
         }
-        await author.destroy({force:true}); // {force:true} ==> To delete permanently Since we have used Softdelete option here on Author model
+        await author.destroy({ force: true }); // {force:true} ==> To delete permanently Since we have used Softdelete option here on Author model
         res.json({ message: "Author deleted permanently!" });
     } catch (error) {
         res.status(500).json({ error: "Failed to delete the author" });
@@ -96,7 +101,6 @@ const editAuthor = async (req, res) => {
         res.status(500).json({ error: "Failed to edit the Author details" })
     }
 }
-
 
 const searchAuthor = async (req, res) => {
     try {
@@ -133,31 +137,31 @@ const searchAuthor = async (req, res) => {
     }
 }
 
-const restoreAuthor = async (req, res)=>{
-    try{
-        const author = await db.author.restore({ where:{ id :req.params.id}});
+const restoreAuthor = async (req, res) => {
+    try {
+        const author = await db.author.restore({ where: { id: req.params.id } });
         if (!author) {
             return res.status(404).json({ error: "Author not found!" })
         }
-        res.status(200).json({ "Author is restored":author })
-    }catch(error){
+        res.status(200).json({ "Author is restored": author })
+    } catch (error) {
         console.log(error.message)
         res.status(404).json({ error: "Author not found!" })
     }
 }
 
-const getAuthorById = async (req, res)=>{
-    try{
+const getAuthorById = async (req, res) => {
+    try {
         const author = await db.author.findByPk(req.params.id);
         if (!author) {
             return res.status(404).json({ error: "Author not found" })
         }
-        res.status(200).json({author})
-    }catch(error){
+        res.status(200).json({ author })
+    } catch (error) {
+        console.log(">>>>>>>>>>><<<<<<<<<<<", error.message)
         res.status(404).json({ error: "Author not found!" })
     }
 }
-
 
 module.exports = {
     createAuthor,
@@ -167,6 +171,6 @@ module.exports = {
     softDeleteAuthor,
     permanentDeleteAuthor,
     searchAuthor,
-    // getAllAuthorsBlog,
+    getAllAuthorsBlog,
     restoreAuthor
 }

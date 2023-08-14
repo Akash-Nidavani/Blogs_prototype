@@ -10,8 +10,8 @@ router.get('/:id', authorController.getAuthorById);
 router.put('/:id', authorController.editAuthor);
 router.delete('/soft/:id', authorController.softDeleteAuthor);
 router.delete('/permanent/:id', authorController.permanentDeleteAuthor);
-router.get('/search/:key', authorController.searchAuthor)
-// router.get('/blogs', authorController.getAllAuthorsBlog)
+router.get('/search/:key', authorController.searchAuthor);
+router.get('/post', authorController.getAllAuthorsBlog);
 router.post('/restore/:id', authorController.restoreAuthor)
 
 module.exports = router;

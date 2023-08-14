@@ -47,7 +47,6 @@ const getAllPosts = async (req, res) => {
     }
 };
 
-
 const getPostById = async (req, res) => {
     try {
         const blog = await db.post.findOne({
@@ -73,7 +72,6 @@ const getPostById = async (req, res) => {
     }
 };
 
-
 const SoftDeletePost = async (req, res) => {
     try {
         const blog = await db.post.findByPk(req.params.id);
@@ -88,7 +86,6 @@ const SoftDeletePost = async (req, res) => {
         res.status(500).json({ error: "Failed to delete the blog" });
     }
 };
-
 
 const updatePost = async (req, res) => {
     try {
@@ -134,7 +131,6 @@ const getDeletedPost = async (req, res) => {
     }
 };
 
-
 const getPublishedPost = async (req, res) => {
     try {
         const blog = await db.post.findAll({
@@ -157,7 +153,6 @@ const getPublishedPost = async (req, res) => {
         res.status(500).json({ error: "Failed to fetch blogs" });
     }
 };
-
 
 const searchBlog = async (req, res) => {
     const searchKey = req.params.key;
@@ -195,7 +190,6 @@ const searchBlog = async (req, res) => {
         res.status(500).json({ error: 'Failed to search' });
     }
 }
-
 
 const restoreBlog = async (req, res)=>{
     try{

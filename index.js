@@ -5,6 +5,7 @@ const postRoutes = require("./routes/postRoutes")
 const tagRoutes = require("./routes/tagsRoutes")
 const categoryRoutes = require("./routes/categoryRoute")
 const authorRoutes = require("./routes/authorRoute")
+const authorize = require("./auth/authorize")
 
 const app = express()
 const PORT = 3001
@@ -16,7 +17,8 @@ app.use("/images", express.static("./images"));
 
 app.use("/author",uploadImage, authorRoutes)
 app.use("/post",uploadImage, postRoutes);
-app.use("/category", categoryRoutes)
+// app.use("/category", categoryRoutes)
+app.use("/category", authorize('Admin', 'Reviewer'),categoryRoutes)
 
 
 app.listen(PORT,()=>{
